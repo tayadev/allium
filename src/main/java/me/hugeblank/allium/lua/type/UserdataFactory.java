@@ -16,10 +16,7 @@ import org.squiddev.cobalt.function.TwoArgFunction;
 import org.squiddev.cobalt.function.VarArgFunction;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -488,15 +485,13 @@ public class UserdataFactory<T> {
                             if (m.isDefault()) {
                                 return InvocationHandler.invokeDefault(p, m, params);
                             }
-                            LuaValue[] args = null;
-                            if (params != null) {
-                                args = new LuaValue[params.length];
-                                for (int i = 0; i < params.length; i++) {
-                                    args[i] = toLuaValue(params[i], finalIfaceMethod.parameters().get(i).parameterType().lowerBound());
-                                }
+
+                            LuaValue[] args = new LuaValue[params.length];
+                            for (int i = 0; i < params.length; i++) {
+                                args[i] = toLuaValue(params[i], finalIfaceMethod.parameters().get(i).parameterType().lowerBound());
                             }
 
-                            return toJava(state, func.invoke(state, params == null ? Constants.NIL : ValueFactory.varargsOf(args)).first(), finalIfaceMethod.returnType().upperBound());
+                            return toJava(state, func.invoke(state, ValueFactory.varargsOf(args)).first(), finalIfaceMethod.returnType().upperBound());
                         });
             } else {
                 return value.checkUserdata(clatz.raw());

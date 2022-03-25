@@ -59,9 +59,9 @@ builder:executes(function(context) -- The part of the command with no values att
 end)
 
 -- DEV NOTE - the command context is what's not working here. Very confusing.
-builder:m_then(CommandManager.argument("guess", commands.arguments.string.word())):executes(function(context)
+builder:m_then(CommandManager.argument("guess", argumentTypes.string.word())):executes(function(context)
     -- The part of the command that handles guesses
-    local str = commands.arguments.string.getString(context, "guess") -- Get the guess from the command context
+    local str = argumentTypes.string.getString(context, "guess") -- Get the guess from the command context
     if word ~= nil then -- If theres a game running
         commands.tellraw("@a", text(player:getName():asString().." guessed <bold>"..str.."</bold>"))
         if #str == 1 then -- If the guess is a letter

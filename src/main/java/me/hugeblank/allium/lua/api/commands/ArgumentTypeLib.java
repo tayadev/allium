@@ -3,6 +3,7 @@ package me.hugeblank.allium.lua.api.commands;
 import com.mojang.brigadier.arguments.ArgumentType;
 import me.basiqueevangelist.enhancedreflection.api.EClass;
 import me.hugeblank.allium.lua.api.JavaLib;
+import me.hugeblank.allium.lua.api.WrappedLuaLibrary;
 import me.hugeblank.allium.lua.type.LuaIndex;
 import me.hugeblank.allium.lua.type.LuaWrapped;
 import org.squiddev.cobalt.LuaError;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @LuaWrapped
-public class ArgumentTypeLib {
+public class ArgumentTypeLib implements WrappedLuaLibrary {
     private static final Map<String, Class<? extends ArgumentType<?>>> types = new HashMap<>();
 
     public static void addType(String id, Class<? extends ArgumentType<?>> type) {
@@ -36,5 +37,10 @@ public class ArgumentTypeLib {
         } catch (Exception e) {
             throw new LuaError(e);
         }
+    }
+
+    @Override
+    public String getLibraryName() {
+        return "argumentTypes";
     }
 }
