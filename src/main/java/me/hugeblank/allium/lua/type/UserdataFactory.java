@@ -483,19 +483,20 @@ public class UserdataFactory<T> {
 
             if (unimplemented == 1) {
                 EMethod finalIfaceMethod = ifaceMethod;
-
                 return Proxy.newProxyInstance(clatz.classLoader(), new Class[]{clatz.raw()},
                         (p, m, params) -> {
                             if (m.isDefault()) {
                                 return InvocationHandler.invokeDefault(p, m, params);
                             }
-
-                            var args = new LuaValue[params.length];
-                            for (int i = 0; i < params.length; i++) {
-                                args[i] = toLuaValue(params[i], finalIfaceMethod.parameters().get(i).parameterType().lowerBound());
+                            LuaValue[] args = null;
+                            if (params != null) {
+                                args = new LuaValue[params.length];
+                                for (int i = 0; i < params.length; i++) {
+                                    args[i] = toLuaValue(params[i], finalIfaceMethod.parameters().get(i).parameterType().lowerBound());
+                                }
                             }
 
-                            return toJava(state, func.invoke(state, ValueFactory.varargsOf(args)).first(), finalIfaceMethod.returnType().upperBound());
+                            return toJava(state, func.invoke(state, params == null ? Constants.NIL : ValueFactory.varargsOf(args)).first(), finalIfaceMethod.returnType().upperBound());
                         });
             } else {
                 return value.checkUserdata(clatz.raw());
