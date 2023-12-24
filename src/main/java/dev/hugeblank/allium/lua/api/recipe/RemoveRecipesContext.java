@@ -2,6 +2,7 @@ package dev.hugeblank.allium.lua.api.recipe;
 
 import dev.hugeblank.allium.lua.type.annotation.LuaWrapped;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import org.squiddev.cobalt.LuaError;
@@ -26,6 +27,7 @@ public class RemoveRecipesContext extends RecipeContext {
 
     @LuaWrapped
     public void removeRecipe(Recipe<?> recipe) throws LuaError {
+        // TODO: how get id???
         removeRecipe(recipe.getId());
     }
 

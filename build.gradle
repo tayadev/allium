@@ -6,6 +6,12 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
 // Following by example, using semantic versioning
 String v = 'v' + project.mod_version
 if ("0" != project.release_candidate) {

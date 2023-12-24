@@ -3,8 +3,6 @@ package dev.hugeblank.allium.util;
 import net.minecraft.entity.Entity;
 import org.squiddev.cobalt.LuaValue;
 
-import java.util.Map;
-
 public interface EntityDataHolder {
     LuaValue allium$getTemporaryData(String key);
     void allium$setTemporaryData(String key, LuaValue value);

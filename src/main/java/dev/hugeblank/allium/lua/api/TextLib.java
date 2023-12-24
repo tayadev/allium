@@ -33,12 +33,12 @@ public class TextLib implements WrappedLuaLibrary {
 
     @LuaWrapped
     public Text fromJson(String input) {
-        return Text.Serializer.fromLenientJson(input);
+        return Text.Serialization.fromLenientJson(input);
     }
 
     @LuaWrapped
     public String toJson(Text text) {
-        return Text.Serializer.toJson(text);
+        return Text.Serialization.toJsonString(text);
     }
 
     /*@LuaWrapped

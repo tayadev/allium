@@ -19,6 +19,7 @@ package dev.hugeblank.allium.loader.resources;
 
 import dev.hugeblank.allium.loader.Script;
 import net.minecraft.resource.AbstractFileResourcePack;
+import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -61,7 +62,7 @@ public class AlliumResourcePack extends AbstractFileResourcePack {
     }
 
     private AlliumResourcePack(String name, Map<Script, Path> paths, AutoCloseable closer) {
-        super(null);
+        super(name, false); // TODO: figure out what always stable does and if we can reall just pass false
 
         this.name = name;
         this.basePaths = paths;
@@ -160,29 +161,28 @@ public class AlliumResourcePack extends AbstractFileResourcePack {
     }
 
     @Override
-    protected InputStream openFile(String filename) throws IOException {
+    // public InputSupplier<InputStream> open(ResourceType arg0, Identifier arg1) {
+    public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
+
+        String filename = id.getPath();
+
         if (filename.equals("pack.mcmeta")) {
-            return AlliumResourcePack.class.getResourceAsStream("/assets/pack.mcmeta");
+            return (InputSupplier<InputStream>) AlliumResourcePack.class.getResourceAsStream("/assets/pack.mcmeta");
         } else if (filename.equals("pack.png")) {
-            return AlliumResourcePack.class.getResourceAsStream("/assets/allium/icon.png");
+            return (InputSupplier<InputStream>) AlliumResourcePack.class.getResourceAsStream("/assets/allium/icon.png");
         }
 
         Map.Entry<Script, Path> entry = getPath(filename);
 
-        if (entry != null) {
-            return Files.newInputStream(entry.getValue());
-        }
-        throw new FileNotFoundException("\"" + filename + "\" in Allium resource pack");
+        return (InputSupplier<InputStream>) Files.newInputStream(entry.getValue());
     }
 
     @Override
-    protected boolean containsFile(String filename) {
-        Map.Entry<Script, Path> entry = getPath(filename);
-        return entry != null;
-    }
+    // public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
+    public void findResources(ResourceType type, String namespace, String prefix, ResultConsumer consumer) {
 
-    @Override
-    public Collection<Identifier> findResources(ResourceType type, String namespace, String path, Predicate<Identifier> predicate) {
+        // TODO: change it so we don't return but put results into consumer
+
         if (!namespaces.getOrDefault(type, Collections.emptySet()).contains(namespace)) {
             return Collections.emptyList();
         }

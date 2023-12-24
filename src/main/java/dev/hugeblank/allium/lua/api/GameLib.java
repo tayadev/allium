@@ -8,8 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import org.squiddev.cobalt.LuaError;
 
 import java.util.List;
@@ -29,27 +30,28 @@ public class GameLib implements WrappedLuaLibrary {
 
     @LuaWrapped
     public Block getBlock(String id) {
-        return Objects.requireNonNull(Registry.BLOCK.get(new Identifier(id)));
+        return Objects.requireNonNull(Registries.BLOCK.get(new Identifier(id)));
     }
 
     @LuaWrapped
     public Item getItem(String id) {
-        return Objects.requireNonNull(Registry.ITEM.get(new Identifier(id)));
+        return Objects.requireNonNull(Registries.ITEM.get(new Identifier(id)));
     }
 
     @LuaWrapped
     public ServerWorld getWorld(String id) {
+        // TODO: World registry doesn't seem to exist?
         return Objects.requireNonNull(Allium.SERVER.getWorld(RegistryKey.of(Registry.WORLD_KEY, new Identifier(id))));
     }
 
     @LuaWrapped
     public @CoerceToNative Map<String, Block> listBlocks() {
-        return Registry.BLOCK.stream().collect(Collectors.toMap(x -> Registry.BLOCK.getId(x).toString(), x -> x));
+        return Registries.BLOCK.stream().collect(Collectors.toMap(x -> Registries.BLOCK.getId(x).toString(), x -> x));
     }
 
     @LuaWrapped
     public @CoerceToNative Map<String, Item> listItems() {
-        return Registry.ITEM.stream().collect(Collectors.toMap(x -> Registry.ITEM.getId(x).toString(), x -> x));
+        return Registries.ITEM.stream().collect(Collectors.toMap(x -> Registries.ITEM.getId(x).toString(), x -> x));
     }
 
     @LuaWrapped
