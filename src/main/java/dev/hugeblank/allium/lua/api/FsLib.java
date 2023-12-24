@@ -4,7 +4,6 @@ import dev.hugeblank.allium.loader.Script;
 import dev.hugeblank.allium.lua.type.LuaHandle;
 import dev.hugeblank.allium.lua.type.LuaReadHandle;
 import dev.hugeblank.allium.lua.type.LuaWriteHandle;
-import me.hugeblank.allium.lua.type.*;
 import dev.hugeblank.allium.lua.type.annotation.CoerceToNative;
 import dev.hugeblank.allium.lua.type.annotation.LuaWrapped;
 import dev.hugeblank.allium.util.FileHelper;
@@ -153,9 +152,10 @@ public class FsLib implements WrappedLuaLibrary {
             Files.delete(path);
         } catch (DirectoryNotEmptyException e) {
             try {
-                Stream<Path> list = Files.list(path);
-                for (Path p : list.toList()) {
-                    deleteInternal(p);
+                try (Stream<Path> list = Files.list(path)) {
+                    for (Path p : list.toList()) {
+                        deleteInternal(p);
+                    }
                 }
             } catch (IOException ex) {
                 throw new LuaError(e);
@@ -213,10 +213,11 @@ public class FsLib implements WrappedLuaLibrary {
             }
             String route = routes[0];
             String expr = route.replace("*", "(|.*)");
-            Stream<Path> list = Files.list(base);
-            for (Path path : list.toList()) {
-                if (path.getFileName().toString().matches(expr))
-                    findInternal(base.resolve(path), subPath(routes), out);
+            try (Stream<Path> list = Files.list(base)) {
+                for (Path path : list.toList()) {
+                    if (path.getFileName().toString().matches(expr))
+                        findInternal(base.resolve(path), subPath(routes), out);
+                }
             }
 
         } catch (IOException e) {

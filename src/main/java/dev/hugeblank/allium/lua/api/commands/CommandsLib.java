@@ -1,6 +1,7 @@
 package dev.hugeblank.allium.lua.api.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
 import dev.hugeblank.allium.Allium;
 import dev.hugeblank.allium.loader.Script;
@@ -34,9 +35,17 @@ public class CommandsLib implements WrappedLuaLibrary {
     public Boolean exec(String... args) {
         if (isServerNull()) return null;
 
+        String command = String.join(" ", args);
+
         CommandManager manager = Allium.SERVER.getCommandManager();
         ServerCommandSource source = Allium.SERVER.getCommandSource();
-        return manager.execute(source, String.join(" ", args)) != 0;
+        CommandDispatcher<ServerCommandSource> dispatcher = manager.getDispatcher();
+        ParseResults<ServerCommandSource> parseResults = dispatcher.parse(command, source);
+        if(parseResults.getExceptions().size() != 0) {
+            return false;
+        }
+        manager.execute(parseResults, command);
+        return true;
     }
 
     @LuaIndex
@@ -47,7 +56,9 @@ public class CommandsLib implements WrappedLuaLibrary {
         ServerCommandSource source = Allium.SERVER.getCommandSource();
         CommandDispatcher<ServerCommandSource> dispatcher = manager.getDispatcher();
         CommandNode<?> node = dispatcher.findNode(Collections.singleton(command));
+        ParseResults<ServerCommandSource> parseResults = dispatcher.parse(command, source);
 
+        // TODO: idk what this is supposed to do, so idk how to fix it
         if (node == null) return null;
         else return (args) -> manager.execute(source, (command + " " + String.join(" ", args).trim())) != 0;
     }

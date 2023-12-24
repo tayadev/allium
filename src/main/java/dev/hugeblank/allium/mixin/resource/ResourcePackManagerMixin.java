@@ -2,8 +2,9 @@ package dev.hugeblank.allium.mixin.resource;
 
 import dev.hugeblank.allium.loader.resources.AlliumResourcePackProvider;
 import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackProvider;
+import net.minecraft.resource.ResourcePackProfile.PackFactory;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -23,7 +24,7 @@ public class ResourcePackManagerMixin {
     private Set<ResourcePackProvider> providers;
 
     @Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/resource/ResourcePackProfile$Factory;[Lnet/minecraft/resource/ResourcePackProvider;)V")
-    private void init(ResourcePackProfile.Factory profileFactory, ResourcePackProvider[] providers, CallbackInfo ci) {
+    private void init(PackFactory profileFactory, ResourcePackProvider[] providers, CallbackInfo ci) {
         this.providers = new HashSet<>(this.providers);
         this.providers.add(new AlliumResourcePackProvider());
     }

@@ -44,12 +44,13 @@ public class Generator {
                                 Path fakeDir = Path.of(trueRoot.relativize(dir).toString());
                                 if (!fakeDir.equals(ROOT) && (fakeDir.getFileName().toString().equals("unused") || fakeDir.getFileName().toString().equals("mixin")))
                                     return FileVisitResult.SKIP_SUBTREE;
-                                Stream<Path> files = Files.list(dir);
-                                if (files
-                                        .filter(Files::isRegularFile)
-                                        .anyMatch((p) -> p.getFileName().toString().matches(".*\\.class$"))
-                                ) {
-                                    PACKAGES.add(fakeDir);
+                                try (Stream<Path> files = Files.list(dir)) {
+                                    if (files
+                                            .filter(Files::isRegularFile)
+                                            .anyMatch((p) -> p.getFileName().toString().matches(".*\\.class$"))
+                                    ) {
+                                        PACKAGES.add(fakeDir);
+                                    }
                                 }
                                 return FileVisitResult.CONTINUE;
                             }

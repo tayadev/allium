@@ -11,8 +11,8 @@ import net.minecraft.server.SaveLoader;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.util.ApiServices;
 import net.minecraft.util.collection.IndexedIterable;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,8 +28,8 @@ public abstract class MinecraftServerMixin {
     private void init(Thread serverThread, LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader, Proxy proxy, DataFixer dataFixer, ApiServices apiServices, WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory, CallbackInfo ci) {
         Allium.SERVER = (MinecraftServer) (Object) this;
 
-        IndexedIterable<RegistryEntry<Block>> blocks = Allium.SERVER.getRegistryManager().get(Registry.BLOCK_KEY).getIndexedEntries();
-        IndexedIterable<RegistryEntry<Item>> items = Allium.SERVER.getRegistryManager().get(Registry.ITEM_KEY).getIndexedEntries();
+        IndexedIterable<RegistryEntry<Block>> blocks = Allium.SERVER.getRegistryManager().get(Registries.BLOCK.getKey()).getIndexedEntries();
+        IndexedIterable<RegistryEntry<Item>> items = Allium.SERVER.getRegistryManager().get(Registries.ITEM.getKey()).getIndexedEntries();
         blocks.forEach((entry) -> {
             if (entry.getKey().isPresent()) {
                 Allium.BLOCKS.put(entry.getKey().get().getValue(), entry.value());

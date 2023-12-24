@@ -1,13 +1,17 @@
 package dev.hugeblank.allium.lua.api.recipe;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
+
 import dev.hugeblank.allium.lua.api.JsonLib;
 import dev.hugeblank.allium.lua.type.annotation.LuaWrapped;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
+
 import org.squiddev.cobalt.LuaError;
 import org.squiddev.cobalt.LuaValue;
 
@@ -27,7 +31,8 @@ public class AddRecipesContext extends RecipeContext {
 
     @LuaWrapped
     public void addRecipe(Identifier id, JsonObject el) throws LuaError {
-        addRecipe(id, RecipeManager.deserialize(id, el));
+        Recipe<?> recipe = Util.getResult(Recipe.CODEC.parse(JsonOps.INSTANCE, el), JsonParseException::new);
+        addRecipe(id, recipe);
     }
 
     @LuaWrapped

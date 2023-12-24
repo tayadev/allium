@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import dev.hugeblank.allium.lua.api.commands.ArgumentTypeLib;
 import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

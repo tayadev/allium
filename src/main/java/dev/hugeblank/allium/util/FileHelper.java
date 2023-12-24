@@ -54,27 +54,28 @@ public class FileHelper {
     public static Set<Script> getValidDirScripts(Path p) {
         Set<Script> out = new HashSet<>();
         try {
-            Stream<Path> files = Files.list(p);
-            files.forEach((scriptDir) -> {
-                Path path;
-                if (Files.isDirectory(scriptDir)) {
-                    path = scriptDir;
-                } else {
-                    try {
-                        FileSystem fs = FileSystems.newFileSystem(scriptDir); // zip, tarball, whatever has a provider.
-                        path = fs.getPath("/");
-                    } catch (IOException | ProviderNotFoundException e) {
-                        return; // Just a file we can't read, ignore it and move on.
+            try (Stream<Path> files = Files.list(p)) {
+                files.forEach((scriptDir) -> {
+                    Path path;
+                    if (Files.isDirectory(scriptDir)) {
+                        path = scriptDir;
+                    } else {
+                        try {
+                            FileSystem fs = FileSystems.newFileSystem(scriptDir); // zip, tarball, whatever has a provider.
+                            path = fs.getPath("/");
+                        } catch (IOException | ProviderNotFoundException e) {
+                            return; // Just a file we can't read, ignore it and move on.
+                        }
                     }
-                }
-                try {
-                    BufferedReader reader = Files.newBufferedReader(path.resolve(MANIFEST_FILE_NAME));
-                    Manifest manifest = new Gson().fromJson(reader, Manifest.class);
-                    out.add(new Script(manifest, path));
-                } catch (IOException e) {
-                    Allium.LOGGER.error("Could not find " + MANIFEST_FILE_NAME  + " file on path " + scriptDir, e);
-                }
-            });
+                    try {
+                        BufferedReader reader = Files.newBufferedReader(path.resolve(MANIFEST_FILE_NAME));
+                        Manifest manifest = new Gson().fromJson(reader, Manifest.class);
+                        out.add(new Script(manifest, path));
+                    } catch (IOException e) {
+                        Allium.LOGGER.error("Could not find " + MANIFEST_FILE_NAME  + " file on path " + scriptDir, e);
+                    }
+                });
+            }
         } catch (IOException e) {
             Allium.LOGGER.error("Could not read from scripts directory", e);
         }
